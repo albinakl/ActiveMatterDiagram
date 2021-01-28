@@ -5,7 +5,7 @@
 float x_position = 0.0;
 int state = 1;
 float angle = 0;
-Particles Group(120);
+Particles Group(320);
 
 void init()
 {

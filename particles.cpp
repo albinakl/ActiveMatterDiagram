@@ -54,12 +54,12 @@ void Particles::update_vel()
 	vector<double> F_x(Particles::Size);
 	vector<double> F_y(Particles::Size);
 	//parameters
-	double sigma = 0.01;
+	double sigma = 0.1;
 	double U_0 = 10;
 	double Delta_L = 0.2;
 	double d, cx, cy, eps;
 	double R = 0.2, B = 0.3, A = 2.1;
-	double D = 4, chi = 0;
+	double D = 4, chi = 0.2;
 	double a, b;
 
 	//F_des
