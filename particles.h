@@ -17,11 +17,15 @@ public:
 	void update_pos();
 
 //private:
-	int Size;
-	double dt = 0.1;
-	double tau = 0.5;
+	int Size, t = 0;
+	double dt = 0.1, tau = 0.5;
 	double x_max = 60, x_min = 0;
 	double y_max = 20, y_min = 0;
+	double v_des_1 = 1.34, v_des_2 = -1.34;
+	double sigma = 0.1;
+	double U_0 = 10, Delta_L = 0.2;
+	double R = 0.2, B = 0.3, A = 2.1;
+	double D = 4, chi = 0.15;
 
 	vector<double> x;
 	vector<double> y;

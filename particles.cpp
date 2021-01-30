@@ -15,7 +15,6 @@ Particles::Particles(int Size)
 
 	double vx_max = 1.0, vx_min = -1.0;
 	double vy_max = 1.0, vy_min = -1.0;
-	double v_des_1 = 1.34, v_des_2 = -1.34;
 
 	//srand(73);
 
@@ -27,9 +26,9 @@ Particles::Particles(int Size)
 		vy.push_back((double)rand() / (double)RAND_MAX * (vy_max - vy_min) + vy_min);
 		
 		if ((int)rand() % 2)
-			v_des.push_back(v_des_1);
+			v_des.push_back(Particles::v_des_1);
 		else
-			v_des.push_back(v_des_2);
+			v_des.push_back(Particles::v_des_2);
 	}
 
 	Particles::Size = Size;
@@ -53,13 +52,8 @@ void Particles::update_vel()
 {
 	vector<double> F_x(Particles::Size);
 	vector<double> F_y(Particles::Size);
-	//parameters
-	double sigma = 0.1;
-	double U_0 = 10;
-	double Delta_L = 0.2;
+	
 	double d, cx, cy, eps;
-	double R = 0.2, B = 0.3, A = 2.1;
-	double D = 4, chi = 0.2;
 	double a, b;
 
 	//F_des
@@ -69,24 +63,24 @@ void Particles::update_vel()
 	}
 	//F_fluct
 	for (int i = 0; i < Particles::Size; i++) {
-		F_x[i] += sigma * 2 * ((double)rand() / (double)RAND_MAX - 0.5);
-		F_y[i] += sigma * 2 * ((double)rand() / (double)RAND_MAX - 0.5);
+		F_x[i] += Particles::sigma * 2 * ((double)rand() / (double)RAND_MAX - 0.5);
+		F_y[i] += Particles::sigma * 2 * ((double)rand() / (double)RAND_MAX - 0.5);
 	}
 	//F_wall
 	for (int i = 0; i < Particles::Size; i++) {
 		//F_x[i] += 0;
-		F_y[i] += U_0 / Delta_L * (exp(-Particles::y[i] / Delta_L) - exp((Particles::y[i] - Particles::y_max) / Delta_L));
+		F_y[i] += Particles::U_0 / Particles::Delta_L * (exp(-Particles::y[i] / Particles::Delta_L) - exp((Particles::y[i] - Particles::y_max) / Particles::Delta_L));
 	}
 	//F_par
 	for (int i = 0; i < Particles::Size; i++) {
 		for (int k = 0; k < Particles::Size; k++) { //k != i
 			if (k != i) {
 				d = sqrt(pow(Particles::x[k] - Particles::x[i], 2) + pow(Particles::y[k] - Particles::y[i], 2));
-				eps = d - 2 * R;
+				eps = d - 2 * Particles::R;
 				cx = Particles::vx[k] / sqrt(pow(Particles::vx[k], 2) + pow(Particles::vy[k], 2));
 				cy = Particles::vy[k] / sqrt(pow(Particles::vx[k], 2) + pow(Particles::vy[k], 2));
-				F_x[k] += A * exp(-eps / B) * 1 / 2 * (Particles::x[k] - Particles::x[i]) / d * (1 - cx * (Particles::x[k] - Particles::x[i]) / d);
-				F_y[k] += A * exp(-eps / B) * 1 / 2 * (Particles::y[k] - Particles::y[i]) / d * (1 - cy * (Particles::y[k] - Particles::y[i]) / d);
+				F_x[k] += Particles::A * exp(-eps / Particles::B) * 1 / 2 * (Particles::x[k] - Particles::x[i]) / d * (1 - cx * (Particles::x[k] - Particles::x[i]) / d);
+				F_y[k] += Particles::A * exp(-eps / Particles::B) * 1 / 2 * (Particles::y[k] - Particles::y[i]) / d * (1 - cy * (Particles::y[k] - Particles::y[i]) / d);
 			}
 		}
 	}
@@ -100,10 +94,10 @@ void Particles::update_vel()
 						{
 							a = (Particles::x[j] - Particles::x[i]) / (pow((Particles::x[j] - Particles::x[i]), 2) + pow((Particles::y[j] - Particles::y[i]), 2));
 							b = (Particles::y[j] - Particles::y[i]) / (pow((Particles::x[j] - Particles::x[i]), 2) + pow((Particles::y[j] - Particles::y[i]), 2));
-							F_x[i] += b * chi;
-							F_y[i] += -a * chi;
-							F_x[j] += -b * chi;
-							F_y[j] += a * chi;
+							F_x[i] += b * Particles::chi;
+							F_y[i] += -a * Particles::chi;
+							F_x[j] += -b * Particles::chi;
+							F_y[j] += a * Particles::chi;
 						}
 			}
 		}
@@ -136,7 +130,7 @@ void Particles::update_pos()
 		//reflecting boundary conditions
 		if (Particles::y[i] >= Particles::y_max or Particles::y[i] <= Particles::y_min)
 			Particles::vy[i] = -Particles::vy[i];
-
 	}
+	Particles::t += 1;
 }
 

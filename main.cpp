@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
     glutCreateWindow("Simulation");
 
-    glutDisplayFunc(display_particles);
+    glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutTimerFunc(0, timer, 0);
     init();
