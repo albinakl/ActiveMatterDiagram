@@ -1,17 +1,18 @@
 #include <glut.h>
+#include <iostream>
 #include <string>
 #include <stdio.h>
 #include "anim.h"
 #include "particles.h"
 
 Particles Group(320);
+int stop_flag = 0;
 
 const char* cmd = "ffmpeg -r 10 -f rawvideo -pix_fmt rgba -s 500x250 -i - "
 "-threads 0 -preset fast -y -pix_fmt yuv420p -crf 21 -vf vflip output.mp4";
 
 // open pipe to ffmpeg's stdin in binary write mode
 FILE* ffmpeg = _popen(cmd, "wb");
-
 int* buffer = new int[500 * 250];
 
 void init()
@@ -202,15 +203,19 @@ void timer(int)
     Group.update_vel();
     Group.update_pos();
 
-    if (Group.t < 700) {
+    if (Group.t < 1000 && stop_flag == 0) {
 
         glViewport(0, 0, 500, 250);
         glReadPixels(0, 0, 500, 250, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
         fwrite(buffer, sizeof(int) * 500 * 250, 1, ffmpeg);
         glutPostRedisplay();
         glutTimerFunc(1000 / 60, timer, 0);
+        if (Group.t % 10 == 0)
+            stop_flag = Group.count_lanes();
     }
-    else if (Group.t == 700) {
+    else if (Group.t == 1000 || stop_flag == 1) {
         _pclose(ffmpeg);
+        cout << Group.t << " steps; " << Group.nlanes << " number of lanes" << endl;
+        //here we can start a new simulation
     }
 }

@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <vector>
 #include <math.h>
+#include <numeric>
+#include <algorithm> 
 #include "particles.h"
 #include "anim.h"
 
@@ -37,6 +39,9 @@ Particles::Particles(int Size)
 	Particles::vx = vx;
 	Particles::vy = vy;
 	Particles::v_des = v_des;
+
+	Particles::nlanes = Size;
+	Particles::repetitions_of_nlanes = 0;
 }
 
 Particles::~Particles()
@@ -132,5 +137,39 @@ void Particles::update_pos()
 			Particles::vy[i] = -Particles::vy[i];
 	}
 	Particles::t += 1;
+}
+
+int Particles::count_lanes()
+{	
+	int count_lanes = 0, idx;
+	double current = 0;
+	vector<pair<double, int> > sortpair;
+	
+	for (int i = 0; i < Particles::Size; ++i) {
+		sortpair.push_back(make_pair(Particles::y[i], i));
+	}
+	sort(sortpair.begin(), sortpair.end());
+
+	for (int i = 0; i < Particles::Size; ++i) {
+		idx = sortpair[i].second;
+
+		if (Particles::v_des[idx] != current) {
+			count_lanes += 1;
+			current = Particles::v_des[idx];
+		}
+	}
+	
+	if (Particles::nlanes != count_lanes) {
+		Particles::nlanes = count_lanes;
+		Particles::repetitions_of_nlanes = 0;
+		return 0;
+	}
+	else {										 
+		Particles::repetitions_of_nlanes += 1;
+		if (Particles::repetitions_of_nlanes > 10)
+			return 1;
+		else
+			return 0;
+	}
 }
 
