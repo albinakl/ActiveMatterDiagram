@@ -7,7 +7,7 @@
 #include "particles.h"
 #include "anim.h"
 
-Particles::Particles(int Size)
+Particles::Particles(int Size, double chi)
 {	
 	vector <double> x;
 	vector <double> y;
@@ -34,6 +34,7 @@ Particles::Particles(int Size)
 	}
 
 	Particles::Size = Size;
+	Particles::chi = chi;
 	Particles::x = x;
 	Particles::y = y;
 	Particles::vx = vx;

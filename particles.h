@@ -10,7 +10,7 @@ using namespace std;
 class Particles
 {
 public:
-	Particles(int Size = 10);
+	Particles(int Size = 10, double chi = 0.15);
 	~Particles();
 
 	void update_vel();
@@ -28,7 +28,7 @@ public:
 	double sigma = 0.1;
 	double U_0 = 10, Delta_L = 0.2;
 	double R = 0.2, B = 0.3, A = 2.1;
-	double D = 4, chi = 0.0;
+	double D = 4, chi;
 
 	int nlanes, repetitions_of_nlanes;
 

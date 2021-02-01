@@ -5,7 +5,7 @@
 #include "anim.h"
 #include "particles.h"
 
-Particles Group(320);
+Particles Group(320, 0.15);
 int stop_flag = 0;
 
 const char* cmd = "ffmpeg -r 10 -f rawvideo -pix_fmt rgba -s 500x250 -i - "
