@@ -1,9 +1,18 @@
 #include <glut.h>
 #include <string>
+#include <stdio.h>
 #include "anim.h"
 #include "particles.h"
 
 Particles Group(320);
+
+const char* cmd = "ffmpeg -r 10 -f rawvideo -pix_fmt rgba -s 500x250 -i - "
+"-threads 0 -preset fast -y -pix_fmt yuv420p -crf 21 -vf vflip output.mp4";
+
+// open pipe to ffmpeg's stdin in binary write mode
+FILE* ffmpeg = _popen(cmd, "wb");
+
+int* buffer = new int[500 * 250];
 
 void init()
 {
@@ -189,9 +198,19 @@ void reshape(int w, int h)
 
 void timer(int)
 {
-    glutPostRedisplay();
-    glutTimerFunc(1000 / 60, timer, 0);
-
+    
     Group.update_vel();
     Group.update_pos();
+
+    if (Group.t < 700) {
+
+        glViewport(0, 0, 500, 250);
+        glReadPixels(0, 0, 500, 250, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        fwrite(buffer, sizeof(int) * 500 * 250, 1, ffmpeg);
+        glutPostRedisplay();
+        glutTimerFunc(1000 / 60, timer, 0);
+    }
+    else if (Group.t == 700) {
+        _pclose(ffmpeg);
+    }
 }
